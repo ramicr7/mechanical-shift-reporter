@@ -1,6 +1,7 @@
 
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
+import { CSSProperties } from "react";
 
 interface StatCardProps {
   title: string;
@@ -12,6 +13,7 @@ interface StatCardProps {
     isPositive: boolean;
   };
   className?: string;
+  style?: CSSProperties;
 }
 
 const StatCard = ({
@@ -21,6 +23,7 @@ const StatCard = ({
   description,
   trend,
   className,
+  style,
 }: StatCardProps) => {
   return (
     <div 
@@ -28,6 +31,7 @@ const StatCard = ({
         "p-6 rounded-xl bg-white shadow-soft transition-all duration-300 hover:shadow-md border border-gray-100",
         className
       )}
+      style={style}
     >
       <div className="flex justify-between items-start">
         <div className="space-y-2">

@@ -5,14 +5,16 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import PriorityBadge from "@/components/ui/PriorityBadge";
 import { Calendar, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CSSProperties } from "react";
 
 interface ReportCardProps {
   report: Report;
   onClick?: () => void;
   className?: string;
+  style?: CSSProperties;
 }
 
-const ReportCard = ({ report, onClick, className }: ReportCardProps) => {
+const ReportCard = ({ report, onClick, className, style }: ReportCardProps) => {
   return (
     <Card 
       className={cn(
@@ -20,6 +22,7 @@ const ReportCard = ({ report, onClick, className }: ReportCardProps) => {
         className
       )} 
       onClick={onClick}
+      style={style}
     >
       <div className="p-5">
         <div className="flex items-start justify-between mb-3">
