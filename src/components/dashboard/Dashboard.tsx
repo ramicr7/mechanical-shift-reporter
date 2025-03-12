@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import StatCard from "./StatCard";
 import RecentReports from "./RecentReports";
 import { AlertCircle, CheckCircle, Flag } from "lucide-react";
-import { getReports } from "@/utils/reportUtils";
+import { getReports, Report } from "@/utils/reportUtils";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -12,17 +12,27 @@ const Dashboard = () => {
     open: 0,
     highPriority: 0
   });
+  const [reports, setReports] = useState<Report[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch reports and calculate dashboard statistics
-    const reports = getReports();
+    const fetchReports = async () => {
+      try {
+        const fetchedReports = await getReports();
+        setReports(fetchedReports);
+        
+        setStats({
+          total: fetchedReports.length,
+          open: fetchedReports.filter(report => report.status === "Open").length,
+          highPriority: fetchedReports.filter(report => report.priority === "High").length
+        });
+      } catch (error) {
+        console.error("Failed to fetch reports:", error);
+      }
+    };
     
-    setStats({
-      total: reports.length,
-      open: reports.filter(report => report.status === "Open").length,
-      highPriority: reports.filter(report => report.priority === "High").length
-    });
+    fetchReports();
   }, []);
 
   const handleStatCardClick = (filter: string) => {
@@ -76,7 +86,7 @@ const Dashboard = () => {
       </div>
       
       <div className="mt-10">
-        <RecentReports />
+        <RecentReports reports={reports} />
       </div>
     </div>
   );
