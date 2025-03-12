@@ -36,6 +36,15 @@ const Home = () => {
     b.dateLogged.getTime() - a.dateLogged.getTime()
   );
   
+  // Navigate to filtered report lists
+  const navigateToAllReports = () => navigate('/reports');
+  const navigateToOpenReports = () => {
+    navigate('/reports', { state: { initialFilters: { status: ['Open'] } } });
+  };
+  const navigateToHighPriorityReports = () => {
+    navigate('/reports', { state: { initialFilters: { priority: ['High'] } } });
+  };
+  
   // Determine animation delay for staggered entrance
   const getAnimationDelay = (index: number) => `${(index + 1) * 0.1}s`;
   
@@ -69,6 +78,7 @@ const Home = () => {
             description="Total number of maintenance reports"
             className="animate-fade-up"
             style={{ animationDelay: getAnimationDelay(0) }}
+            onClick={navigateToAllReports}
           />
           
           <StatCard
@@ -78,6 +88,7 @@ const Home = () => {
             description="Reports waiting to be addressed"
             className="animate-fade-up"
             style={{ animationDelay: getAnimationDelay(1) }}
+            onClick={navigateToOpenReports}
           />
           
           <StatCard
@@ -87,6 +98,7 @@ const Home = () => {
             description="Issues requiring immediate attention"
             className="animate-fade-up"
             style={{ animationDelay: getAnimationDelay(2) }}
+            onClick={navigateToHighPriorityReports}
           />
         </div>
         

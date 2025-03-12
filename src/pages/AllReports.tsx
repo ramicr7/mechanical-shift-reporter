@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Area, Priority, Report, Status, exportToCSV, filterReports, getReports } from "@/utils/reportUtils";
 import Navbar from "@/components/layout/Navbar";
 import ReportCard from "@/components/reports/ReportCard";
@@ -8,8 +8,22 @@ import ReportFilter from "@/components/reports/ReportFilter";
 import { Button } from "@/components/ui/button";
 import { FileDown, Loader2 } from "lucide-react";
 
+interface LocationState {
+  initialFilters?: {
+    search?: string;
+    status?: Status[];
+    priority?: Priority[];
+    area?: Area[];
+    dateFrom?: Date;
+    dateTo?: Date;
+  };
+}
+
 const AllReports = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { initialFilters } = (location.state as LocationState) || {};
+  
   const [reports, setReports] = useState<Report[]>([]);
   const [filteredReports, setFilteredReports] = useState<Report[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +33,14 @@ const AllReports = () => {
       try {
         const data = await getReports();
         setReports(data);
-        setFilteredReports(data);
+        
+        // Apply initial filters if provided
+        if (initialFilters) {
+          const filtered = filterReports(data, initialFilters);
+          setFilteredReports(filtered);
+        } else {
+          setFilteredReports(data);
+        }
       } catch (error) {
         console.error("Error fetching reports:", error);
       } finally {
@@ -28,7 +49,7 @@ const AllReports = () => {
     };
     
     fetchReports();
-  }, []);
+  }, [initialFilters]);
   
   const handleFilterChange = (filters: {
     search?: string;

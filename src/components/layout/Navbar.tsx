@@ -28,8 +28,8 @@ const Navbar = () => {
                 className={cn(
                   "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ease-in-out",
                   location.pathname === item.path
-                    ? "text-primary bg-primary bg-opacity-10"
-                    : "text-gray-600 hover:text-primary hover:bg-gray-100"
+                    ? "text-primary font-semibold border-b-2 border-primary"
+                    : "text-gray-600 hover:text-primary hover:bg-gray-50"
                 )}
               >
                 <span className="mr-1.5">{item.icon}</span>

@@ -14,6 +14,7 @@ interface StatCardProps {
   };
   className?: string;
   style?: CSSProperties;
+  onClick?: () => void;
 }
 
 const StatCard = ({
@@ -24,14 +25,17 @@ const StatCard = ({
   trend,
   className,
   style,
+  onClick,
 }: StatCardProps) => {
   return (
     <div 
       className={cn(
         "p-6 rounded-xl bg-white shadow-soft transition-all duration-300 hover:shadow-md border border-gray-100",
+        onClick && "cursor-pointer hover:translate-y-[-2px]",
         className
       )}
       style={style}
+      onClick={onClick}
     >
       <div className="flex justify-between items-start">
         <div className="space-y-2">
