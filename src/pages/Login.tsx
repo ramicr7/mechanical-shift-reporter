@@ -24,7 +24,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const user = login(credentials);
+      const user = await login(credentials);
       
       if (user) {
         toast({

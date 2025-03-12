@@ -1,4 +1,12 @@
 import { toast } from "@/hooks/use-toast";
+import { 
+  addRemarkToReportApi, 
+  addReportApi, 
+  deleteReportApi, 
+  getReportByIdApi, 
+  getReportsApi, 
+  updateReportApi 
+} from "./api";
 
 export type Area = 
   | "Furnace"
@@ -68,197 +76,41 @@ export const AREAS: Area[] = [
   "Store and Spare"
 ];
 
-export const SAMPLE_REPORTS: Report[] = [
-  {
-    id: "1",
-    title: "Hydraulic leak in station 4",
-    description: "Observed hydraulic fluid leaking from the main cylinder at station 4. The leak appears to be coming from the seal.",
-    area: "Hydraulic System",
-    loggedBy: "John Smith",
-    dateLogged: new Date("2023-10-15"),
-    status: "Open",
-    priority: "High",
-    imageUrl: "/placeholder.svg"
-  },
-  {
-    id: "2",
-    title: "Bearing failure in Gear box",
-    description: "Unusual noise coming from the main drive gear box. Suspect bearing failure based on sound analysis.",
-    area: "Gear box",
-    loggedBy: "Emma Johnson",
-    dateLogged: new Date("2023-10-12"),
-    actionTakenBy: "Mike Williams",
-    actionTaken: "Replaced the damaged bearing and realigned the shaft.",
-    dateAction: new Date("2023-10-14"),
-    status: "Closed",
-    priority: "Medium",
-    imageUrl: "/placeholder.svg"
-  },
-  {
-    id: "3",
-    title: "Cooling water flow decreased",
-    description: "The cooling water flow to furnace zone 2 has decreased by approximately 30%, causing temperature fluctuations.",
-    area: "Water System",
-    loggedBy: "Alex Garcia",
-    dateLogged: new Date("2023-10-16"),
-    actionTakenBy: "Sarah Chen",
-    actionTaken: "Initial inspection shows partial blockage. Currently cleaning the system.",
-    dateAction: new Date("2023-10-16"),
-    status: "Ongoing",
-    priority: "High",
-    imageUrl: "/placeholder.svg"
-  },
-  {
-    id: "4",
-    title: "Lubrication pump failure",
-    description: "The automatic lubrication system for the main drive train has stopped functioning. No oil is being delivered to bearings.",
-    area: "Lubrication System",
-    loggedBy: "James Wilson",
-    dateLogged: new Date("2023-10-10"),
-    actionTakenBy: "Robert Johnson",
-    actionTaken: "Replaced pump motor and verified system operation. All points now receiving lubrication.",
-    dateAction: new Date("2023-10-11"),
-    status: "Closed",
-    priority: "High",
-    imageUrl: "/placeholder.svg"
-  },
-  {
-    id: "5",
-    title: "Misalignment in C&C Shear",
-    description: "The C&C Shear is producing uneven cuts due to misalignment of the blade.",
-    area: "C&C Shear",
-    loggedBy: "David Miller",
-    dateLogged: new Date("2023-10-13"),
-    status: "Open",
-    priority: "Medium",
-    imageUrl: "/placeholder.svg"
-  },
-  {
-    id: "6",
-    title: "Spare motor inventory low",
-    description: "Inventory of 50HP replacement motors is down to only 1 unit. Need to reorder.",
-    area: "Store and Spare",
-    loggedBy: "Patricia Lopez",
-    dateLogged: new Date("2023-10-14"),
-    actionTakenBy: "Patricia Lopez",
-    actionTaken: "Placed order for 3 additional motors with supplier.",
-    dateAction: new Date("2023-10-14"),
-    status: "Closed",
-    priority: "Low",
-    imageUrl: "/placeholder.svg"
-  },
-  {
-    id: "7",
-    title: "Power Slitter blade damage",
-    description: "The main blade on Power Slitter #2 shows excessive wear on the cutting edge.",
-    area: "Power Slitter",
-    loggedBy: "Thomas Wright",
-    dateLogged: new Date("2023-10-16"),
-    status: "Open",
-    priority: "Medium",
-    imageUrl: "/placeholder.svg"
-  }
-];
-
-let reports = [...SAMPLE_REPORTS];
-
-// Update the sample reports to include remarks field
-reports = reports.map(report => ({
-  ...report,
-  remarks: []
-}));
-
-// Mock function to get reports - would be replaced with API call in production
-export const getReports = (): Promise<Report[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([...reports]);
-    }, 500);
-  });
+// Function to get reports - now calls the API
+export const getReports = async (): Promise<Report[]> => {
+  return getReportsApi();
 };
 
-// Mock function to get report by ID - would be replaced with API call in production
-export const getReportById = (id: string): Promise<Report | undefined> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(reports.find(report => report.id === id));
-    }, 300);
-  });
+// Function to get report by ID - now calls the API
+export const getReportById = async (id: string): Promise<Report | undefined> => {
+  return getReportByIdApi(id);
 };
 
-// Mock function to add a new report - would be replaced with API call in production
-export const addReport = (report: Omit<Report, 'id'>): Promise<Report> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const newReport = {
-        ...report,
-        id: Math.random().toString(36).substr(2, 9),
-        remarks: []
-      };
-      reports.push(newReport);
-      resolve(newReport);
-    }, 500);
-  });
+// Function to add a new report - now calls the API
+export const addReport = async (report: Omit<Report, 'id'>): Promise<Report> => {
+  return addReportApi(report);
 };
 
-// Update a report
-export const updateReport = (updatedReport: Report): Promise<Report> => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const index = reports.findIndex(r => r.id === updatedReport.id);
-      
-      if (index !== -1) {
-        reports[index] = updatedReport;
-        resolve(updatedReport);
-      } else {
-        reject(new Error("Report not found"));
-      }
-    }, 500);
-  });
+// Update a report - now calls the API
+export const updateReport = async (updatedReport: Report): Promise<Report> => {
+  return updateReportApi(updatedReport);
 };
 
-// Add a remark to a report
-export const addRemarkToReport = (
+// Add a remark to a report - now calls the API
+export const addRemarkToReport = async (
   reportId: string, 
   remarkText: string, 
   addedBy: string
 ): Promise<Report> => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const index = reports.findIndex(r => r.id === reportId);
-      
-      if (index !== -1) {
-        const newRemark: Remark = {
-          id: Math.random().toString(36).substr(2, 9),
-          text: remarkText,
-          addedBy,
-          dateAdded: new Date()
-        };
-        
-        // Create a new remarks array if it doesn't exist
-        const currentRemarks = reports[index].remarks || [];
-        reports[index].remarks = [...currentRemarks, newRemark];
-        
-        resolve(reports[index]);
-      } else {
-        reject(new Error("Report not found"));
-      }
-    }, 500);
-  });
+  return addRemarkToReportApi(reportId, remarkText, addedBy);
 };
 
-// Delete a report
-export const deleteReport = (id: string): Promise<boolean> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const initialLength = reports.length;
-      reports = reports.filter(report => report.id !== id);
-      resolve(reports.length < initialLength);
-    }, 500);
-  });
+// Delete a report - now calls the API
+export const deleteReport = async (id: string): Promise<boolean> => {
+  return deleteReportApi(id);
 };
 
-// Helper function to export reports to Excel (CSV)
+// Helper function to export reports to CSV
 export const exportToCSV = (reports: Report[]) => {
   // Headers for CSV
   const headers = [

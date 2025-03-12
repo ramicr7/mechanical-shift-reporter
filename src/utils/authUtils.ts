@@ -1,4 +1,6 @@
 
+import { getCurrentUserApi, loginApi, logoutApi } from "./api";
+
 interface User {
   id: string;
   name: string;
@@ -10,48 +12,25 @@ interface Credentials {
   password: string;
 }
 
-// Predefined users
-const USERS: Record<string, { password: string, user: User }> = {
-  "User@nbm": {
-    password: "User@1234",
-    user: {
-      id: "User@nbm",
-      name: "User",
-      role: "user"
-    }
-  },
-  "administrator": {
-    password: "mastermind",
-    user: {
-      id: "administrator",
-      name: "Administrator",
-      role: "admin"
-    }
-  }
-};
-
 // Login function
 export const login = (credentials: Credentials): User | null => {
-  const userEntry = USERS[credentials.id];
-  
-  if (userEntry && userEntry.password === credentials.password) {
-    // Store user in localStorage for persistence
-    localStorage.setItem('currentUser', JSON.stringify(userEntry.user));
-    return userEntry.user;
+  try {
+    // The API call will handle storing the user in localStorage
+    return loginApi(credentials) as unknown as User;
+  } catch (error) {
+    console.error("Login error:", error);
+    return null;
   }
-  
-  return null;
 };
 
 // Logout function
 export const logout = (): void => {
-  localStorage.removeItem('currentUser');
+  logoutApi();
 };
 
 // Get current user function
 export const getCurrentUser = (): User | null => {
-  const userJson = localStorage.getItem('currentUser');
-  return userJson ? JSON.parse(userJson) : null;
+  return getCurrentUserApi();
 };
 
 // Check if user is authenticated
