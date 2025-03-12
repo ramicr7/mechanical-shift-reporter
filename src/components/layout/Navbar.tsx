@@ -1,16 +1,25 @@
 
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { FileText, Home, PlusCircle } from "lucide-react";
+import { FileText, Home, LogOut, PlusCircle, User } from "lucide-react";
+import { getCurrentUser, logout } from "@/utils/authUtils";
+import { Button } from "../ui/button";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const currentUser = getCurrentUser();
   
   const navItems = [
     { name: "Home", path: "/", icon: <Home className="w-5 h-5" /> },
     { name: "All Reports", path: "/reports", icon: <FileText className="w-5 h-5" /> },
     { name: "New Report", path: "/new-report", icon: <PlusCircle className="w-5 h-5" /> }
   ];
+  
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
   
   return (
     <header className="fixed top-0 left-0 right-0 z-10 bg-white bg-opacity-90 backdrop-blur-sm border-b border-gray-200 shadow-sm">
@@ -37,6 +46,32 @@ const Navbar = () => {
               </Link>
             ))}
           </nav>
+          
+          {currentUser && (
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center">
+                <User className="w-4 h-4 mr-2 text-gray-500" />
+                <span className="text-sm font-medium">
+                  {currentUser.name}
+                  {currentUser.role === "admin" && (
+                    <span className="ml-1 text-xs bg-primary text-white px-1.5 py-0.5 rounded-full">
+                      Admin
+                    </span>
+                  )}
+                </span>
+              </div>
+              
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleLogout}
+                className="flex items-center text-gray-600 hover:text-red-600"
+              >
+                <LogOut className="w-4 h-4 mr-1" />
+                <span>Logout</span>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </header>

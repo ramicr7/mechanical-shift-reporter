@@ -1,4 +1,3 @@
-
 import { toast } from "@/hooks/use-toast";
 
 export type Area = 
@@ -24,6 +23,13 @@ export type Area =
 export type Status = "Open" | "Ongoing" | "Closed";
 export type Priority = "High" | "Medium" | "Low";
 
+export interface Remark {
+  id: string;
+  text: string;
+  addedBy: string;
+  dateAdded: Date;
+}
+
 export interface Report {
   id: string;
   title: string;
@@ -37,6 +43,7 @@ export interface Report {
   status: Status;
   priority: Priority;
   imageUrl?: string;
+  remarks?: Remark[];
 }
 
 // Sample data for development
@@ -153,11 +160,19 @@ export const SAMPLE_REPORTS: Report[] = [
   }
 ];
 
+let reports = [...SAMPLE_REPORTS];
+
+// Update the sample reports to include remarks field
+reports = reports.map(report => ({
+  ...report,
+  remarks: []
+}));
+
 // Mock function to get reports - would be replaced with API call in production
 export const getReports = (): Promise<Report[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(SAMPLE_REPORTS);
+      resolve([...reports]);
     }, 500);
   });
 };
@@ -166,7 +181,7 @@ export const getReports = (): Promise<Report[]> => {
 export const getReportById = (id: string): Promise<Report | undefined> => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(SAMPLE_REPORTS.find(report => report.id === id));
+      resolve(reports.find(report => report.id === id));
     }, 300);
   });
 };
@@ -177,9 +192,68 @@ export const addReport = (report: Omit<Report, 'id'>): Promise<Report> => {
     setTimeout(() => {
       const newReport = {
         ...report,
-        id: Math.random().toString(36).substr(2, 9)
+        id: Math.random().toString(36).substr(2, 9),
+        remarks: []
       };
+      reports.push(newReport);
       resolve(newReport);
+    }, 500);
+  });
+};
+
+// Update a report
+export const updateReport = (updatedReport: Report): Promise<Report> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const index = reports.findIndex(r => r.id === updatedReport.id);
+      
+      if (index !== -1) {
+        reports[index] = updatedReport;
+        resolve(updatedReport);
+      } else {
+        reject(new Error("Report not found"));
+      }
+    }, 500);
+  });
+};
+
+// Add a remark to a report
+export const addRemarkToReport = (
+  reportId: string, 
+  remarkText: string, 
+  addedBy: string
+): Promise<Report> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const index = reports.findIndex(r => r.id === reportId);
+      
+      if (index !== -1) {
+        const newRemark: Remark = {
+          id: Math.random().toString(36).substr(2, 9),
+          text: remarkText,
+          addedBy,
+          dateAdded: new Date()
+        };
+        
+        // Create a new remarks array if it doesn't exist
+        const currentRemarks = reports[index].remarks || [];
+        reports[index].remarks = [...currentRemarks, newRemark];
+        
+        resolve(reports[index]);
+      } else {
+        reject(new Error("Report not found"));
+      }
+    }, 500);
+  });
+};
+
+// Delete a report
+export const deleteReport = (id: string): Promise<boolean> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const initialLength = reports.length;
+      reports = reports.filter(report => report.id !== id);
+      resolve(reports.length < initialLength);
     }, 500);
   });
 };

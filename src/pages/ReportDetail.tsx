@@ -1,18 +1,32 @@
 
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Report, getReportById } from "@/utils/reportUtils";
 import Navbar from "@/components/layout/Navbar";
 import ReportDetailComponent from "@/components/reports/ReportDetail";
 import { Loader2 } from "lucide-react";
+import { isAuthenticated } from "@/utils/authUtils";
+import { toast } from "@/hooks/use-toast";
 
 const ReportDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [report, setReport] = useState<Report | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
+    // Redirect to login if not authenticated
+    if (!isAuthenticated()) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to view reports",
+        variant: "destructive",
+      });
+      navigate("/login", { replace: true });
+      return;
+    }
+    
     const fetchReport = async () => {
       if (!id) return;
       
@@ -35,7 +49,11 @@ const ReportDetail = () => {
     };
     
     fetchReport();
-  }, [id]);
+  }, [id, navigate]);
+  
+  const handleReportUpdate = (updatedReport: Report) => {
+    setReport(updatedReport);
+  };
   
   return (
     <div className="min-h-screen bg-gray-50">
@@ -54,7 +72,10 @@ const ReportDetail = () => {
             </p>
           </div>
         ) : report ? (
-          <ReportDetailComponent report={report} />
+          <ReportDetailComponent 
+            report={report} 
+            onReportUpdate={handleReportUpdate} 
+          />
         ) : null}
       </main>
     </div>
